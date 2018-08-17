@@ -46,6 +46,9 @@ class Maze():
     def action_space(self):
         return Maze.actions
     
+    def state_space(self):
+        return 4,4
+    
     def __str__(self):
         out = '===================================\n'
         for row in range(len(self.maze)):
