@@ -1,8 +1,7 @@
 import numpy as np
 
 class Maze():
-    
-    N,S,E,W = 0,1,2,3
+    actions = ['N','S','E','W']
     # offsets to move North, South, East, or West
     offset = [(-1,0),(1,0),(0,1),(0,-1)]
     
@@ -22,13 +21,13 @@ class Maze():
         self.player = np.array([0,0])
         return self.player
     
-    # action should be one of: Maze.N, Maze.S, Maze.E, Maze.W
+    # action should be one of: 'N', 'S', 'E', 'W'
     # returns reward, done
     # rewards are: +1 = success, -1 = failure, 0 = no outcome
     # done = True if a terminal state is reached, otherwise False
     def step(self, action):
         self.i += 1
-        self.player = np.add(self.player, Maze.offset[action])
+        self.player = np.add(self.player, Maze.offset[Maze.actions.index(action)])
         if max(self.player) > 3 or min(self.player) < 0:        # out of bounds
             return self.player, -1, True
         else:
@@ -42,10 +41,13 @@ class Maze():
     
     # return a random action (equally distributed across the action space)
     def sample(self):
-        return np.random.randint(4)
+        return Maze.actions[np.random.randint(4)]
     
     def action_space(self):
-        return [Maze.N, Maze.S, Maze.E, Maze.W]
+        return Maze.actions
+    
+    def state_space(self):
+        return 4,4
     
     def __str__(self):
         out = '===================================\n'
