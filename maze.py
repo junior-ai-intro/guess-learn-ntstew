@@ -27,7 +27,9 @@ class Maze():
     # done = True if a terminal state is reached, otherwise False
     def step(self, action):
         self.i += 1
-        self.player = np.add(self.player, Maze.offset[Maze.actions.index(action)])
+        if type(action) is str:
+            action = Maze.actions.index(action)
+        self.player = np.add(self.player, Maze.offset[action])
         if max(self.player) > 3 or min(self.player) < 0:        # out of bounds
             return self.player, -1, True
         else:
