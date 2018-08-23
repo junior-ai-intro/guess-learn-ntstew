@@ -74,5 +74,24 @@ class Maze():
             out += '\n'
         out += '==================================='
         return out
+    
+    def print_q(q):
+        print('=====  ================================')
+        print('state         N       S       E       W\n')
+        for m in range(4):
+            for n in range(4):
+                out = '('
+                out += str(m)
+                out += ','
+                out += str(n)
+                out += ')  '
+                for a in range(4):
+                    out += '{:>8,d}'.format(int(q[m][n][a]))
+                print(out)
+            print('-----  --------------------------------')
+         
+                
+                
+    
 
 
