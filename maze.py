@@ -1,4 +1,6 @@
 import numpy as np
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
 
 class Maze():
     actions = ['N','S','E','W']
@@ -45,6 +47,10 @@ class Maze():
     def sample(self):
         return Maze.actions[np.random.randint(4)]
     
+    # return a random action in numeric form (equally distributed across the action space)
+    def sample_n(self):
+        return np.random.randint(4)
+    
     def action_space(self):
         return Maze.actions
     
@@ -89,6 +95,21 @@ class Maze():
                     out += '{:>8,d}'.format(int(q[m][n][a]))
                 print(out)
             print('-----  --------------------------------')
+            
+    def plot(q,f = np.mean):
+        fig = plt.figure(figsize=(16,16))
+        ax = fig.add_subplot(111, projection='3d')
+        x = np.zeros((4,4))
+        y = np.zeros((4,4))
+        z = np.zeros((4,4))
+        for n in range(4):
+            for m in range(4):
+                    x[n][m] = n
+                    y[n][m] = m
+                    z[n][m] = f(q[n][m])
+        ax.plot_surface(x, y, z)
+        plt.show()
+
 
                  
                 
