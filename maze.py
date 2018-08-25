@@ -110,6 +110,16 @@ class Maze():
         ax.plot_surface(x, y, z)
         plt.show()
 
+    # follow the optimum path in the q-table, but don't take more than 12 steps    
+    def walk(q):
+        maze = Maze()
+        state = maze.reset()
+        done = False
+        steps = 0
+        while not done and steps <= 12:
+            state, reward, done = maze.step(np.argmax(q[state[0]][state[1]]))
+            print(steps, maze)
+            steps += 1
 
                  
                 
