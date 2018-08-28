@@ -81,7 +81,7 @@ class Maze():
         out += '==================================='
         return out
     
-    def print_q(q):
+    def print_q(q, mode='all'):
         print('=====  ================================')
         print('state         N       S       E       W\n')
         for m in range(4):
@@ -92,7 +92,13 @@ class Maze():
                 out += str(n)
                 out += ')  '
                 for a in range(4):
-                    out += '{:>8,d}'.format(int(q[m][n][a]))
+                    if mode=='all':
+                        out += '{:>8,d}'.format(int(q[m][n][a]))
+                    elif mode=='rewards':
+                        if q[m][n][a] > 0:
+                            out += '{:8.3f}'.format(q[m][n][a])
+                        else:
+                            out += '        '
                 print(out)
             print('-----  --------------------------------')
             
