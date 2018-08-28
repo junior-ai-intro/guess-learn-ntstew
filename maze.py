@@ -7,9 +7,12 @@ class Maze():
     # offsets to move North, South, East, or West
     offset = [(-1,0),(1,0),(0,1),(0,-1)]
     
-    def __init__(self, random=False):   
+    def __init__(self, random=False, record=False):   
         self.reset(random)
-    
+        self.recording = record
+        if self.recording:
+            self.distances = []
+        
     # moved code from __init__ to here, to allow re-use of Maze instance
     def reset(self, random=False):
         if random:
@@ -33,12 +36,15 @@ class Maze():
             action = Maze.actions.index(action)
         self.player = np.add(self.player, Maze.offset[action])
         if max(self.player) > 3 or min(self.player) < 0:        # out of bounds
+            self.record_distance()
             return self.player, -1, True
         else:
             if self.maze[self.player[0]][self.player[1]] == -1: # moved onto a blocked space
+                self.record_distance()
                 return self.player, -1, True
             self.maze[self.player[0]][self.player[1]] = self.i
             if np.array_equal(self.player, (3,3)):              # reached the exit
+                self.record_distance()
                 return self.player, 1, True
             else:
                 return self.player, 0, False                    # no outcome (player is on an open space)
@@ -56,6 +62,10 @@ class Maze():
     
     def state_space(self):
         return 4,4
+    
+    def record_distance(self):
+        if self.recording:
+            self.distances.append(abs(self.player[0] - 3) + abs(self.player[1] - 3))
     
     def __str__(self):
         out = '===================================\n'
@@ -126,6 +136,10 @@ class Maze():
             state, reward, done = maze.step(np.argmax(q[state[0]][state[1]]))
             print(steps, maze)
             steps += 1
+            
+    def convergence(self):
+        plt.plot(self.distances)
+        plt.show()
 
                  
                 
