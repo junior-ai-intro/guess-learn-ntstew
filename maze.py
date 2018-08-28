@@ -139,6 +139,7 @@ class Maze():
             
     def convergence(self):
         plt.plot(self.distances)
+        plt.title("Distance to Exit")
         plt.show()
 
                  
