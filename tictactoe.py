@@ -208,7 +208,7 @@ class MinimaxPlayer(BasePlayer):
         return best 
           
 class Game:   
-    def __init__(self, x_player, o_player=MinimaxPlayer()):
+    def __init__(self, x_player=EmptyPlayer(), o_player=MinimaxPlayer()):
         self.x_player = x_player
         self.o_player = o_player
         self.x_player.set_n(1)      
@@ -228,16 +228,33 @@ class Game:
 
     # used for reinforcement learning only... for normal game play, use move()
     def step(self, action):
-        #row = action // 3
-        #col = action % 3
-        #if self.board
-        pass
-        
+        try:
+            self.move(action, self.x_player)
+            if self.x_wins():
+                return self.state(self.x_player, self.board), 1, True
+            elif len(self.available) > 0:
+                action = self.o_player.move(self, self.state(self.o_player, self.board))
+                outcome = self.move(action, self.o_player)
+                if self.o_wins():
+                    return self.state(self.x_player, self.board), -1, True
+                else:
+                    return self.state(self.x_player, self.board), 0, len(self.available) == 0
+            else:
+                return self.state(self.x_player, self.board), 0, True
+        except ValueError:
+            return self.state(self.x_player, self.board), -1, True
+      
     def state_space(self):
         return 3**9
     
     def action_space(self):
         return 9
+    
+    def x_wins(self):
+        return max(self.max_min()) == 3
+    
+    def o_wins(self):
+        return min(self.max_min()) == -3
         
     # returns the max and min of sum of each axis + each diagonal
     def max_min(self):
@@ -248,10 +265,7 @@ class Game:
         diag0 = self.board.trace(0)
         diag1 = np.flip(self.board,0).trace(0)
         return max(max(maxs), diag0, diag1), min(min(mins), diag0, diag1)
-
-    def is_empty(self, action):
-        return self.board[action//3][action%3] == 0
-    
+   
     def move(self, action, player):
         n_player = 1 if player is self.x_player else -1
         row = action // 3
@@ -264,15 +278,15 @@ class Game:
         x,o = self.max_min()
         return x == 3 or o == -3
 
-    def is_empty(self, row_col):
-        return self.board[row_col // 3,row_col % 3] == 0
-
     # return a random legal move (do not call if all 9 squares are taken!)
-    def sample(self):
-        if len(self.available) == 0:
-            raise ValueError('cannot sample randomly; board is full')
+    def sample(self, legal=False):
+        if legal:
+            if len(self.available) == 0:
+                raise ValueError('cannot sample randomly; board is full')
+            else:
+                return self.available[np.random.randint(len(self.available))]
         else:
-            return self.available[np.random.randint(len(self.available))]
+            return np.random.randint(9)
     
     def sequential(self):
         for row in range(3):
@@ -325,8 +339,7 @@ class Game:
             self.o_player.record_outcome(self, player.n)
         else:
             self.x_player.record_outcome(self, 0)
-            self.o_player.record_outcome(self, 0)           
-        return player.n
+            self.o_player.record_outcome(self, 0)
     
     def game_over(self):
         return np.max(np.absolute(self.max_min())) == 3 or self.i >= 9
