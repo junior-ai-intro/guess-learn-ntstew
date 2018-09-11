@@ -8,6 +8,9 @@ class BasePlayer:
     def set_n(self,n):
         self.n = n
         
+    def set_env(self, env):
+        self.env = env
+        
     def reset_metrics(self):
         self.wins = 0
         self.losses = 0
@@ -23,6 +26,9 @@ class BasePlayer:
             
     def reset(self):
         pass
+    
+    def update(self, game, state, reward, done):
+        pass
             
     def __str__(self):
         return self.__class__.__name__ + ' w/l/t=' + str(self.wins) + '/' + str(self.losses) + '/' + str(self.ties)       
@@ -35,8 +41,6 @@ class EmptyPlayer(BasePlayer):
     def move(self, game, state):
         pass
 
-    def update(self, game, state, reward):
-        pass
 
 class RandomPlayer(BasePlayer):
     
@@ -44,10 +48,8 @@ class RandomPlayer(BasePlayer):
         super().__init__()
         
     def move(self, game, state):
-        return game.sample()
-
-    def update(self, game, state, reward):
-        pass
+        return game.sample(legal=True)
+    
 
 class HumanPlayer(BasePlayer):
     
@@ -57,10 +59,6 @@ class HumanPlayer(BasePlayer):
     def move(self, game, state):
         print(game)
         return int(input())
-
-    def update(self, game, state, reward):
-        if reward != 0:
-            print('Human player received a reward',reward)
             
     def record_outcome(self, game, outcome):
         print(game)
@@ -83,7 +81,7 @@ class PrettyGoodPlayer(BasePlayer):
         move = self.block_opponent(game)
         if move != -1:
             return move
-        return game.sample()
+        return game.sample(legal=True)
 
     def winning_move(self, game):
         for row in range(3):
@@ -106,9 +104,6 @@ class PrettyGoodPlayer(BasePlayer):
                     if max_min[0] == -self.n * 3 or max_min[1] == -self.n * 3:
                         return row * 3 + col
         return -1
-        
-    def update(self, board, state, reward):
-        pass
 
 class VeryGoodPlayer(PrettyGoodPlayer):
     def __init__(self):
@@ -127,7 +122,7 @@ class VeryGoodPlayer(PrettyGoodPlayer):
         move = self.double_winner(game.board,-self.n)
         if move != -1:
             return move
-        return game.sample()
+        return game.sample(legal=True)
     
     def double_winner(self, board, n):
         for row in range(3):
@@ -163,12 +158,6 @@ class MinimaxPlayer(BasePlayer):
                         best_col = col
         return best_row * 3 + best_col
 
-    # receive feedback from most recent move
-    def update(self, game, state, reward):
-        if reward == -1:
-            print('Inconceivable!')  # how did we manage to lose, having examined every outcome?
-            game.replay()
-    
     # check if the board is full (implying that the game is over)
     def board_is_full(self, board):
         for row in range(3):
@@ -213,6 +202,8 @@ class Game:
         self.o_player = o_player
         self.x_player.set_n(1)      
         self.o_player.set_n(-1)
+        self.x_player.set_env(self)
+        self.o_player.set_env(self)
         self.i = 0
         self.reset()
         
@@ -244,10 +235,10 @@ class Game:
         except ValueError:
             return self.state(self.x_player, self.board), -1, True
       
-    def state_space(self):
+    def state_space():
         return 3**9
     
-    def action_space(self):
+    def action_space():
         return 9
     
     def x_wins(self):
@@ -273,8 +264,9 @@ class Game:
         if self.board[row][col] == 0:
             self.board[row][col] = n_player
             self.available.remove(action)
-            self.states.append(self.state(player, self.board)) # supports instant replay
+            self.states.append(self.state(self.x_player, self.board)) # supports instant replay
         else:
+            print('Illegal move detected.')
             raise ValueError("illegal move")
         x,o = self.max_min()
         return x == 3 or o == -3
@@ -316,7 +308,7 @@ class Game:
     def play(self):
         self.reset()
         self.i+=1
-        while len(self.available) > 0:   
+        while len(self.available) > 0:
             player = self.x_player if self.x_turn else self.o_player
             opponent = self.x_player if not self.x_turn else self.o_player
             state = self.state(player, self.board)
@@ -324,15 +316,14 @@ class Game:
             try:
                 player_wins = self.move(p_row_col,player)
             except ValueError:
-                player.update(self,state,-100)
+                player.update(self,state,-100, True)
                 break
             if player_wins:
-                player.update(self,state,1)
-                opponent.update(self,state,-1)
+                player.update(self,state,1, True)
+                opponent.update(self,state,-1, True)
                 break
             else:
-                player.update(self,state,0)
-                opponent.update(self,state,0)
+                opponent.update(self,state,0, False)
             self.x_turn = not self.x_turn
         if player_wins:
             self.x_player.record_outcome(self, player.n)
@@ -351,7 +342,12 @@ class Game:
         for state in self.states:
             i += 1
             print('===( ' + str(i) + ' [ state=' + str(state) + ' ] )=====================\n')
-            print(Game.draw(Game.construct_board(state)))
+            self.board = Game.construct_board(state)
+            print(Game.draw(self.board))
+            if (self.x_wins()):
+                print('X wins!')
+            if (self.o_wins()):
+                print('O wins!')
         print('\n')
 
     def draw(board):
