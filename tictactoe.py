@@ -273,6 +273,7 @@ class Game:
         if self.board[row][col] == 0:
             self.board[row][col] = n_player
             self.available.remove(action)
+            self.states.append(self.state(player, self.board)) # supports instant replay
         else:
             raise ValueError("illegal move")
         x,o = self.max_min()
@@ -325,7 +326,6 @@ class Game:
             except ValueError:
                 player.update(self,state,-100)
                 break
-            self.states.append(self.state(self.x_player, self.board)) # supports instant replay
             if player_wins:
                 player.update(self,state,1)
                 opponent.update(self,state,-1)
