@@ -266,7 +266,6 @@ class Game:
             self.available.remove(action)
             self.states.append(self.state(self.x_player, self.board)) # supports instant replay
         else:
-            print('Illegal move detected.')
             raise ValueError("illegal move")
         x,o = self.max_min()
         return x == 3 or o == -3
