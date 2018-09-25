@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class BasePlayer:
 
@@ -197,7 +198,7 @@ class MinimaxPlayer(BasePlayer):
         return best
 
 class Game:
-    def __init__(self, x_player=EmptyPlayer(), o_player=MinimaxPlayer(), animation=False):
+    def __init__(self, x_player=EmptyPlayer(), o_player=MinimaxPlayer(), animation=None):
         self.x_player = x_player
         self.o_player = o_player
         self.x_player.set_n(1)
@@ -205,7 +206,7 @@ class Game:
         self.x_player.set_env(self)
         self.o_player.set_env(self)
         self.i = 0
-        self.animation = GameBoard() if animation else None
+        self.animation = animation
         self.reset()
 
     def reset(self, mode='reinforcement_learning'):

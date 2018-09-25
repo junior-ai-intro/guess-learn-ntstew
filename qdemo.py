@@ -1,7 +1,8 @@
 import numpy as np
 from tictactoe import *
+from animation import *
 
-env = Game(o_player=VeryGoodPlayer(),animation=True)
+env = Game(o_player=VeryGoodPlayer(),animation=GameBoard())
 
 discount = 0.9              # these two variables control how we store rewards or penalties in our
 explore = 0.01              # q-table, just like in the lessons about the maze.
