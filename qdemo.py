@@ -22,7 +22,7 @@ not_yet_trained = True      # and keep trying until we are 'trained', see below
 while not_yet_trained:
     total_reward = 0
     attempts += 1
-    for n in range(10):                                    # play 10 games, keep track of the total reward
+    for n in range(100):                                   # play 10 games, keep track of the total reward
         state = env.reset()
         done = False
         ###############################################################################################
