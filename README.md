@@ -2,8 +2,8 @@
 Introduction to Reinforcment Learning
 
 see related articles on Medium:
-  - just the <a href='https://medium.com/@michael_87060/machine-learning-for-10th-graders-d4f9ac7a798'>computer science</a>
-  - or, <a href='https://medium.com/@michael_87060/machine-learning-for-10th-graders-d4f9ac7a798'>build a Q-Bot</a>
+  - just the <a href='https://medium.com/@michael_87060/machine-learning-for-10th-graders-d4f9ac7a798'>computer science</a>.
+  - or, <a href='https://medium.com/@michael_87060/build-a-self-driving-q-bot-6aa67ba60769'>build a Q-Bot</a>.
 
 
 # abstract
