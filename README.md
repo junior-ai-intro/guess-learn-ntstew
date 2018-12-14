@@ -1,10 +1,13 @@
 # guessing-games
 Introduction to Reinforcment Learning
 
+see related articles on Medium:
+  - just the <a href='https://medium.com/@michael_87060/machine-learning-for-10th-graders-d4f9ac7a798'>computer science</a>
+  - or, <a href='https://medium.com/@michael_87060/machine-learning-for-10th-graders-d4f9ac7a798'>build a Q-Bot</a>
+
+
 # abstract
 A six-week high school course that teaches reinforcement learning, by example, requiring only beginner-level Python and 10th-grade math.
-
-Can be taught in software only (using a virtual turtle-bot), or as a combined course in computer science and engineering.
 
 Answers the question: how can the exact same program learn to traverse a maze, play tic-tac-toe, and drive a robot toward a destination?
 
@@ -21,6 +24,6 @@ Just install Jupyter Notebook, download or clone the course, launch the notebook
 
 # requirements: engineering track
 
-We will post sample STL files to build a self-learning turtle-bot soon.
+The robot-building repo is here: https://github.com/jvon-challenges/qbot
 
-Send comments to: michael@jvon.org.
+Send comments to: michael@loislab.org.
